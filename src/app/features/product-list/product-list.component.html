@@ -1,0 +1,24 @@
+<app-nav-bar [cartTotal]="cartTotal" (filterBycategory)="filterBycategory($event)"></app-nav-bar>
+<div class="products">
+    @for (product of products; track product.id) {
+    <div class="product-card">
+        <div class="product-header">
+            <h2>{{ product.productName }}</h2>
+            <p class="category">{{ product.category }} - {{ product.isImported ? 'Importé' : 'Non importé' }}</p>
+        </div>
+        <div class="product-body">
+            <p>Prix HT : <strong>{{ product.price.toFixed(2) }} €</strong></p>
+            <p>Taxe : <strong>{{ product.taxValue.toFixed(2) }} €</strong></p>
+            <p>Prix TTC : <strong>{{ (product.price + product.taxValue).toFixed(2) }} €</strong></p>
+        </div>
+        <div class="product-footer">
+            @if(product.quantity > 0) {
+            <input type="number" [(ngModel)]="quantities[product.id]" value="1" min="1" [max]="product.quantity" />
+            <button (click)="addToCart(product.id)">Ajouter au panier</button>
+            } @else {
+            <p>Produit non disponible...</p>
+            }
+        </div>
+    </div>
+    }
+</div>

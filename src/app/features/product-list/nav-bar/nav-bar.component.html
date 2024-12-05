@@ -1,0 +1,18 @@
+<nav class="navbar">
+    <div class="navbar-left">
+        <label for="category-filter">Filtrer par catégorie :</label>
+        <select id="category-filter" [(ngModel)]="selectedCategory" (change)="selectCategory()">
+            <option value="">Toutes</option>
+            @for(category of categories; track category) {
+            <option [value]="category">{{category}}</option>
+            }
+        </select>
+    </div>
+    <div class="navbar-right">
+        <a href="/cart">
+            <button class="cart-button">
+                Panier ({{ cartTotal }})
+            </button>
+        </a>
+    </div>
+</nav>
