@@ -3,79 +3,67 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Product } from '../interfaces/product.entity'
 import { LocalStorageService } from './local-storage.service';
-import { initializeProducts } from '../utils/product.util';
+import { ProductService } from './product.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
 
-  constructor(private localStorageService: LocalStorageService) {
-  }
-
-  private products = new BehaviorSubject<Product[]>([]);
   private cart = new BehaviorSubject<Product[]>([]);
   cart$ = this.cart.asObservable();
-  products$ = this.products.asObservable();
 
-  getProducts(categoryFilter?: string) {
-    let products: Product[] = this.localStorageService.get('products') as Product[];
-    if(!products) {
-      products = initializeProducts();
-      this.localStorageService.set('products', products);
-    }
-    return categoryFilter ?
-      this.products.next(products.filter(product => product.category === categoryFilter)) :
-      this.products.next(products);
+  constructor(private localStorageService: LocalStorageService, private productService: ProductService) {
+    this.initializeData();
   }
 
   getMyCart() {
-    let cartProducts: Product[] = this.localStorageService.get('cartProducts') as Product[];
-    if (!cartProducts) {
-      cartProducts = [];
-    }
-    this.updateCart(cartProducts);
+    const cartProducts: Product[] = this.localStorageService.get('cartProducts');
+    this.cart.next(cartProducts);
   }
 
   addToCart(productId: number, quantity: number) {
-    const products: Product[] = this.localStorageService.get('products') as Product[];
-    const findProduct = products.find(p => p.id === productId);
-    const findCartProduct = this.cart.value.find(p => p.id === productId);
-    if (!findProduct) {
-      alert('Product not found')
+    if (!quantity) {
+      alert('Quantity required...')
       return;
     }
-    if (findProduct.quantity - quantity < 0) {
+    if (!this.productService.isQuantitySufficientToCart(productId, quantity)) {
       alert('Sorry, product out of stock')
       return;
     }
-    findProduct.quantity -= quantity;
-    if(!findCartProduct) {
-      this.cart.value.push({ ...findProduct, quantity });
+    const product = this.productService.updateStock(productId, quantity, 'SUBTRACT');
+    if (product) {
+      this.updateCart(product, quantity);
+    }
+  }
+
+  removeToCart(productId: number, quantity: number) {
+    const product = this.productService.updateStock(productId, quantity, 'ADD');
+    if (product) {
+      const cartProducts = this.localStorageService.get('cartProducts');
+      this.save(cartProducts.filter(cartProduct => cartProduct.id != productId));
+    }
+  }
+
+  private updateCart(product: Product, quantity: number) {
+    const cartProducts = this.localStorageService.get('cartProducts');
+    const findCartProduct = cartProducts.find(p => p.id === product.id);
+    if (!findCartProduct) {
+      cartProducts.push({ ...product, quantity });
     }
     else {
       findCartProduct.quantity += quantity;
     }
-    this.localStorageService.set('products', products);
-    this.products.next(products);
-    this.updateCart(this.cart.value);
+    this.save(cartProducts);
   }
 
-  removeToCart(productId: number) {
-    const products: Product[] = this.localStorageService.get('products') as Product[];
-    const findCartProduct = this.cart.value.find(product => product.id === productId);
-    const product = products.find(product => product.id === productId);
-    if (!findCartProduct || !product) {
-      alert('Product not found')
-      return;
-    }
-    product.quantity += findCartProduct.quantity;
-    this.updateCart(this.cart.value.filter(cartProduct => cartProduct.id != productId));
-    this.localStorageService.set('products', products);
-  }
-
-  private updateCart(cartProducts: Product[]) {
+  private save(cartProducts: Product[]) {
     this.localStorageService.set('cartProducts', cartProducts);
     this.cart.next(cartProducts);
+  }
+
+  private initializeData() {
+    const cartProducts = this.localStorageService.get('cartProducts');
+    this.localStorageService.set('cartProducts', cartProducts);
   }
 }

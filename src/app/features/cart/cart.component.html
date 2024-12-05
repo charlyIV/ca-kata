@@ -34,7 +34,7 @@
                     <td>{{ (cartProduct.price + cartProduct.taxValue).toFixed(2) }} €</td>
                     <td>{{cartProduct.quantity}}</td>
                     <td>{{(cartProduct.quantity * (cartProduct.price + cartProduct.taxValue)).toFixed(2)}} €</td>
-                    <td><button (click)="removeToCart(cartProduct.id)">Supprimer</button></td>
+                    <td><button (click)="removeToCart(cartProduct.id, cartProduct.quantity)">Supprimer</button></td>
                 </tr>
                 }
             </tbody>

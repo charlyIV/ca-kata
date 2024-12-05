@@ -17,7 +17,6 @@ export class CartComponent {
 
   ngOnInit() {
     this.cartService.getMyCart();
-    this.cartService.getProducts();
     this.cartService.cart$.subscribe(cart => {
       this.cartProducts = cart;
       this.total = {
@@ -27,7 +26,7 @@ export class CartComponent {
     })
   }
 
-  removeToCart(productId: number) {
-    this.cartService.removeToCart(productId);
+  removeToCart(productId: number, quantity: number) {
+    this.cartService.removeToCart(productId, quantity);
   }
 }

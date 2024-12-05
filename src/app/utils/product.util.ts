@@ -6,7 +6,6 @@ export function initializeProducts() {
     return productsDb.map(data => {
       return {
         ...data,
-        initialQuantity: data.quantity,
         taxValue: computeTaxValue(data.category, data.isImported, data.price)
       } as Product;
     })
