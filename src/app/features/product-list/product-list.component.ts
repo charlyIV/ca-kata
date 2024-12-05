@@ -30,7 +30,7 @@ export class ProductListComponent {
   }
 
   addToCart(productId: number) {
-    this.cartService.addToCart(productId, this.quantities[productId]);
+    this.cartService.addToCart(productId, parseInt(this.quantities[productId].toString()));
     this.quantities[productId] = 1;
   }
 

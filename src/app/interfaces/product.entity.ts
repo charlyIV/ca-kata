@@ -3,6 +3,7 @@ export interface Product {
     productName: string;
     price: number;
     quantity: number;
+    quantities: number[];
     isImported: boolean;
     category: string;
     taxValue: number;

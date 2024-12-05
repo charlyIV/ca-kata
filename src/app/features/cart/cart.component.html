@@ -2,25 +2,25 @@
     <div class="navbar-left">
         <a href="/">
             <button class="cart-button">
-                Accueil
+                Liste des produits
             </button>
         </a>
     </div>
 </nav>
 <div class="cart-container">
     <div class="cart-products">
-        @if(cartProducts.length === 0) {
-        <h2>Votre panier est vide...</h2>
-        } @else {
         <h2>Articles dans le panier</h2>
+        @if(cartProducts.length === 0) {
+        <p>Votre panier est vide</p>
+        } @else {
         <table>
             <thead>
                 <tr>
                     <th>Nom</th>
-                    <th>Prix HT</th>
-                    <th>Taxe</th>
-                    <th>Prix TTC</th>
                     <th>Quantité</th>
+                    <th>Taxe</th>
+                    <th>Prix unitaire HT</th>
+                    <th>Prix unitaire TTC</th>
                     <th>Sous-total TTC</th>
                     <th>Actions</th>
                 </tr>
@@ -29,10 +29,10 @@
                 @for(cartProduct of cartProducts; track cartProduct.id) {
                 <tr>
                     <td>{{ cartProduct.productName }}</td>
-                    <td>{{ cartProduct.price.toFixed(2) }} €</td>
-                    <td>{{ cartProduct.taxValue.toFixed(2) }} €</td>
-                    <td>{{ (cartProduct.price + cartProduct.taxValue).toFixed(2) }} €</td>
                     <td>{{cartProduct.quantity}}</td>
+                    <td>{{ cartProduct.taxValue.toFixed(2) }} €</td>
+                    <td>{{ cartProduct.price.toFixed(2) }} €</td>
+                    <td>{{ (cartProduct.price + cartProduct.taxValue).toFixed(2) }} €</td>
                     <td>{{(cartProduct.quantity * (cartProduct.price + cartProduct.taxValue)).toFixed(2)}} €</td>
                     <td><button (click)="removeToCart(cartProduct.id, cartProduct.quantity)">Supprimer</button></td>
                 </tr>
@@ -43,7 +43,8 @@
     </div>
     <div class="cart-summary">
         <h2>Résumé</h2>
-        <p>Total HT : <strong>{{ total.ht.toFixed(2) }} €</strong></p>
-        <p>Total TTC : <strong>{{ total.ttc.toFixed(2) }} €</strong></p>
+        <p>Prix total HT : <strong>{{ total.ht.toFixed(2) }} €</strong></p>
+        <p>Total Taxes : <strong>{{ total.taxValue.toFixed(2) }} €</strong></p>
+        <p>Prix total TTC : <strong>{{ total.ttc.toFixed(2) }} €</strong></p>
     </div>
 </div>

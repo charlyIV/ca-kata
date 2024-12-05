@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 export class CartComponent {
   constructor(private cartService: CartService) { }
   cartProducts: Product[] = [];
-  total: { ht: number, ttc: number } = { ht: 0, ttc: 0 };
+  total: { ht: number, ttc: number, taxValue: number } = { ht: 0, ttc: 0, taxValue: 0 };
 
 
   ngOnInit() {
@@ -21,7 +21,8 @@ export class CartComponent {
       this.cartProducts = cart;
       this.total = {
         ht: this.cartProducts.reduce((a, product) => a + (product.quantity * product.price), 0),
-        ttc: this.cartProducts.reduce((a, product) => a + (product.quantity * (product.price + product.taxValue)), 0)
+        ttc: this.cartProducts.reduce((a, product) => a + (product.quantity * (product.price + product.taxValue)), 0),
+        taxValue: this.cartProducts.reduce((a, product) => a + (product.quantity * product.taxValue), 0)
       }
     })
   }

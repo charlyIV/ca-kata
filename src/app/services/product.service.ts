@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, find } from 'rxjs';
 import { Product } from '../interfaces/product.entity'
 import { LocalStorageService } from './local-storage.service';
-import { initializeProducts } from '../utils/product.util';
+import { initializeProducts, updateQuantities } from '../utils/product.util';
 
 @Injectable({
     providedIn: 'root'
@@ -43,6 +43,7 @@ export class ProductService {
             if(action === 'ADD') {
                 findProduct.quantity += quantity;
             }
+            findProduct.quantities = updateQuantities(findProduct.quantity);
             this.save(products);
             return findProduct;
         }

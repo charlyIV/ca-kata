@@ -35,6 +35,9 @@
 .cart-products {
   flex: 2;
 }
+.cart-products p{
+  text-align: center;
+}
 
 .cart-products table {
   width: 100%;
