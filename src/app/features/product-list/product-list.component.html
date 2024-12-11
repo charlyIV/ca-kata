@@ -7,9 +7,9 @@
             <p class="category">{{ product.category }} - {{ product.isImported ? 'Importé' : 'Non importé' }}</p>
         </div>
         <div class="product-body">
-            <p>Prix HT : <strong>{{ product.price.toFixed(2) }} €</strong></p>
-            <p>Taxe : <strong>{{ product.taxValue.toFixed(2) }} €</strong></p>
-            <p>Prix TTC : <strong>{{ (product.price + product.taxValue).toFixed(2) }} €</strong></p>
+            <p>Prix HT : <strong>{{ product.price | currency:'EUR':'symbol':'1.2'}}</strong></p>
+            <p>Taxe : <strong>{{ product.taxValue | currency:'EUR':'symbol':'1.2'}}</strong></p>
+            <p>Prix TTC : <strong>{{ (product.price + product.taxValue) | currency:'EUR':'symbol':'1.2'}}</strong></p>
         </div>
         <div class="product-footer">
             @if(product.quantity > 0) {

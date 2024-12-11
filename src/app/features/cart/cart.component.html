@@ -30,10 +30,11 @@
                 <tr>
                     <td>{{ cartProduct.productName }}</td>
                     <td>{{cartProduct.quantity}}</td>
-                    <td>{{ cartProduct.taxValue.toFixed(2) }} €</td>
-                    <td>{{ cartProduct.price.toFixed(2) }} €</td>
-                    <td>{{ (cartProduct.price + cartProduct.taxValue).toFixed(2) }} €</td>
-                    <td>{{(cartProduct.quantity * (cartProduct.price + cartProduct.taxValue)).toFixed(2)}} €</td>
+                    <td>{{ cartProduct.taxValue | currency:'EUR':'symbol':'1.2' }}</td>
+                    <td>{{ cartProduct.price | currency:'EUR':'symbol':'1.2' }}</td>
+                    <td>{{ (cartProduct.price + cartProduct.taxValue) | currency:'EUR':'symbol':'1.2' }}</td>
+                    <td>{{(cartProduct.quantity * (cartProduct.price + cartProduct.taxValue)) | currency:'EUR':'symbol':'1.2'}}
+                    </td>
                     <td><button (click)="removeToCart(cartProduct.id, cartProduct.quantity)">Supprimer</button></td>
                 </tr>
                 }
@@ -43,8 +44,8 @@
     </div>
     <div class="cart-summary">
         <h2>Résumé</h2>
-        <p>Prix total HT : <strong>{{ total.ht.toFixed(2) }} €</strong></p>
-        <p>Total Taxes : <strong>{{ total.taxValue.toFixed(2) }} €</strong></p>
-        <p>Prix total TTC : <strong>{{ total.ttc.toFixed(2) }} €</strong></p>
+        <p>Prix total HT : <strong>{{ total.ht | currency:'EUR':'symbol':'1.2'}}</strong></p>
+        <p>Total Taxes : <strong>{{ total.taxValue | currency:'EUR':'symbol':'1.2'}}</strong></p>
+        <p>Prix total TTC : <strong>{{ total.ttc | currency:'EUR':'symbol':'1.2'}}</strong></p>
     </div>
 </div>

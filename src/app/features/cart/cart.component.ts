@@ -1,11 +1,15 @@
 import { Component } from '@angular/core';
+import { CurrencyPipe, registerLocaleData } from '@angular/common';
 import { CartService } from '../../services/cart.service';
 import { Product } from '../../interfaces/product.entity';
 import { FormsModule } from '@angular/forms';
+import localeFr from '@angular/common/locales/fr';
+
+registerLocaleData(localeFr, 'fr');
 
 @Component({
   selector: 'app-cart',
-  imports: [FormsModule],
+  imports: [FormsModule, CurrencyPipe],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css'
 })
