@@ -18,17 +18,17 @@ export class CartService {
   }
 
   getMyCart() {
-    const cartProducts: Product[] = this.localStorageService.get('cartProducts');
+    const cartProducts: Product[] = this.localStorageService.get<Product[]>('cartProducts') || [];
     this.cart.next(cartProducts);
   }
 
   addToCart(productId: number, quantity: number) {
-    if (!quantity) {
-      alert('Quantity required...')
+    if (quantity <= 0) {
+      console.error('Quantity must be greater than zero.');
       return;
     }
     if (!this.productService.isQuantitySufficientToCart(productId, quantity)) {
-      alert('Sorry, product out of stock')
+      console.warn('Insufficient stock for product:', productId);
       return;
     }
     const product = this.productService.updateStock(productId, quantity, 'SUBTRACT');
@@ -40,19 +40,19 @@ export class CartService {
   removeToCart(productId: number, quantity: number) {
     const product = this.productService.updateStock(productId, quantity, 'ADD');
     if (product) {
-      const cartProducts = this.localStorageService.get('cartProducts');
-      this.save(cartProducts.filter(cartProduct => cartProduct.id != productId));
+      const cartProducts = this.localStorageService.get<Product[]>('cartProducts') || [];
+      this.save(cartProducts.filter(cartProduct => cartProduct.id !== productId));
     }
   }
 
   private updateCart(product: Product, quantity: number) {
-    const cartProducts = this.localStorageService.get('cartProducts');
-    const findCartProduct = cartProducts.find(p => p.id === product.id);
-    if (!findCartProduct) {
+    const cartProducts = this.localStorageService.get<Product[]>('cartProducts') || [];
+    const cartProduct = cartProducts.find(p => p.id === product.id);
+    if (!cartProduct) {
       cartProducts.push({ ...product, quantity });
     }
     else {
-      findCartProduct.quantity += quantity;
+      cartProduct.quantity += quantity;
     }
     this.save(cartProducts);
   }
@@ -63,7 +63,7 @@ export class CartService {
   }
 
   private initializeData() {
-    const cartProducts = this.localStorageService.get('cartProducts');
-    this.localStorageService.set('cartProducts', cartProducts);
+    const cartProducts = this.localStorageService.get<Product[]>('cartProducts') || [];
+    this.cart.next(cartProducts);
   }
 }

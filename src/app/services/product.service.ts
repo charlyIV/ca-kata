@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, find } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Product } from '../interfaces/product.entity'
 import { LocalStorageService } from './local-storage.service';
 import { initializeProducts, updateQuantities } from '../utils/product.util';
@@ -18,36 +18,37 @@ export class ProductService {
     }
 
     getProducts(categoryFilter?: string) {
-        const products: Product[] = this.localStorageService.get('products');
-        return categoryFilter ?
-            this.products.next(products.filter(product => product.category === categoryFilter)) :
-            this.products.next(products);
-    }
-    
-    isQuantitySufficientToCart(productId: number, quantity: number): boolean {
-        const products: Product[] = this.localStorageService.get('products');
-        const findProduct = products.find(product => product.id === productId);
-        if (findProduct) {
-            return findProduct.quantity - quantity >= 0;
-        }
-        return false;
+        const products: Product[] = this.localStorageService.get<Product[]>('products') || [];
+        const filterProducts = categoryFilter ?
+            products.filter(product => product.category === categoryFilter) :
+            products;
+        this.products.next(filterProducts);
     }
 
-    updateStock(productId: number, quantity: number, action: 'ADD'| 'SUBTRACT'): Product | null {
-        const products: Product[] = this.localStorageService.get('products');
-        const findProduct = products.find(product => product.id === productId);
-        if (findProduct) {
-            if(action === 'SUBTRACT') {
-                findProduct.quantity -= quantity;
-            }
-            if(action === 'ADD') {
-                findProduct.quantity += quantity;
-            }
-            findProduct.quantities = updateQuantities(findProduct.quantity);
-            this.save(products);
-            return findProduct;
+    isQuantitySufficientToCart(productId: number, quantity: number): boolean {
+        const products: Product[] = this.localStorageService.get<Product[]>('products') || [];
+        const product = products.find(product => product.id === productId);
+
+        if (!product) {
+            console.warn(`Product with ${productId} not found.`);
+            return false;
         }
-        return null;
+
+        return product.quantity >= quantity;
+    }
+
+    updateStock(productId: number, quantity: number, action: 'ADD' | 'SUBTRACT'): Product | null {
+        const products: Product[] = this.localStorageService.get<Product[]>('products') || [];
+        const product = products.find(product => product.id === productId);
+
+        if (!product) {
+            console.warn(`Product with ${productId} not found.`);
+            return null;
+        }       
+        product.quantity += action === 'ADD' ? quantity : -quantity;
+        product.quantities = updateQuantities(product.quantity);
+        this.save(products);
+        return product;
     }
 
     private save(products: Product[]) {
@@ -56,8 +57,9 @@ export class ProductService {
     }
 
     private initializeData() {
-        const productsStored = this.localStorageService.get('products');
+        const productsStored = this.localStorageService.get<Product[]>('products') || [];
         const products = productsStored.length ? productsStored : initializeProducts();
         this.localStorageService.set('products', products);
+        this.products.next(products);
     }
 }

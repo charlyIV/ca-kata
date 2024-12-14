@@ -2,7 +2,6 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.1.
 
-
 ## Dependencies installation
 
 To install dependencies, run:
@@ -37,4 +36,20 @@ To execute unit tests with the [Karma](https://karma-runner.github.io) test runn
 
 ```bash
 ng test
+```
+
+## Running e2e tests
+
+To execute e2e tests with the [Cypress](https://www.cypress.io/) and open Cypress graphical interface run the following command:
+
+```bash
+npm run cypress:open
+```
+
+### Execute Product list e2e
+
+Run the following command
+
+```bash
+npm run cypress:run:products
 ```
